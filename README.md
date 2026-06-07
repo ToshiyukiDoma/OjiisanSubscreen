@@ -9,6 +9,7 @@ Features?
 - Customizable buttons. You can also relocate them anywhere on the screen
 
 Usage:
+- Configure your background directory (Set by default at backgrounds)
 - Run the Boomer Subscreen first
 - Configure the buttons to Spice2x
 - Run the game you're playing
