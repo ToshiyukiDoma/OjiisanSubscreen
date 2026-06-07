@@ -1,0 +1,28 @@
+{
+  "monitor": 1,
+  "reference_width": 1920,
+  "reference_height": 1080,
+  "extras_hidden_on_startup": true,
+  "background_directory": "C:/Users/MXGG/Documents/touchscreen something/v.3.3/backgrounds",
+  "pressed_overlay_image": "pressed.png",
+  "main_buttons": [
+    {"image": "7.png", "x": 100, "y": 325, "controller_button": "A"},
+    {"image": "8.png", "x": 275, "y": 325, "controller_button": "B"},
+    {"image": "9.png", "x": 450, "y": 325, "controller_button": "X"},
+    {"image": "4.png", "x": 100, "y": 500, "controller_button": "Y"},
+    {"image": "5.png", "x": 275, "y": 500, "controller_button": "LB"},
+    {"image": "6.png", "x": 450, "y": 500, "controller_button": "RB"},
+    {"image": "1.png", "x": 100, "y": 675, "controller_button": "LS"},
+    {"image": "2.png", "x": 275, "y": 675, "controller_button": "RS"},
+    {"image": "3.png", "x": 450, "y": 675, "controller_button": "BACK"},
+    {"image": "0.png", "x": 275, "y": 850, "controller_button": "START"}
+  ],
+  "extra_buttons": [
+    {"image": "coin.png", "x": 1650, "y": 625, "controller_button": "DOWN"},
+    {"image": "service.png", "x": 1650, "y": 450, "controller_button": "LEFT"},
+    {"image": "test.png", "x": 1650, "y": 275, "controller_button": "RIGHT"}
+  ],
+  "toggle_button": {
+    "image": "system_toggle.png", "x": 1650, "y": 100, "controller_button": "UP"
+  }
+}
