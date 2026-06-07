@@ -9,7 +9,10 @@ Features?
 - Customizable buttons. You can also relocate them anywhere on the screen
 
 Usage:
-- Configure your background directory (Set by default at backgrounds)
+- Open and modify config.json to
+    - Configure your background directory (Set by default at backgrounds)
+    - Set which monitor it will open to (Set by default at 1)
 - Run the Boomer Subscreen first
 - Configure the buttons to Spice2x
 - Run the game you're playing
+- Enjoy gaem
