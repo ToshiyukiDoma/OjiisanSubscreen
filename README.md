@@ -1,5 +1,5 @@
 # BoomerSubscreen
-You have a touchscreen monitor but you want to try the older sound voltex games...?
+Wanna try older sound voltex games with a touch screen monitor that has no subscreen support?
 
 <img width="1920" height="1080" alt="{ED54D374-21D7-4D0F-80C2-00BFA7C6DB77}" src="https://github.com/user-attachments/assets/5417599b-cbc7-453d-afc3-4885f9ba5f74" />
 
@@ -12,6 +12,7 @@ Features?
 - Customizable buttons. You can also relocate them anywhere on the screen by editing the config.json
 
 Usage:
+- Set your sound voltex to borderless fullscreen
 - Open and modify config.json to
     - Configure your background directory (Set by default at backgrounds)
     - Set which monitor it will open to (Set by default at 1)
@@ -20,3 +21,13 @@ Usage:
 - Run the game you're playing
 - Enjoy gaem
 - Nice one
+
+Issues:
+- It will not work with konasute
+- It is a requirement to play the game on borderless fullscreen
+
+
+
+Made with ChatGPT and Google Gemini
+
+Button Graphics were made from scratch
