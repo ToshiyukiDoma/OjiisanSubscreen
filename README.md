@@ -29,7 +29,7 @@
 ## DIY Build
 ```
 pip install -r requirements.txt
-pyinstaller --noconsole --onefile --name "BoommerSubscreen" --icon="icon.ico" --collect-all vgamepad BoomerSubscreen.py
+pyinstaller --noconsole --onefile --name "OjiisanSubscreen" --icon="icon.ico" --collect-all vgamepad BoomerSubscreen.py
 ```
 
 
