@@ -1,4 +1,4 @@
-# BoomerSubscreen
+# Ojii-san Subscreen
 ## Wanna try older sound voltex games with a touch screen monitor that has no subscreen support?
 
 <img width="1280" height="720" alt="{ED54D374-21D7-4D0F-80C2-00BFA7C6DB77}" src="https://github.com/user-attachments/assets/5417599b-cbc7-453d-afc3-4885f9ba5f74" />
