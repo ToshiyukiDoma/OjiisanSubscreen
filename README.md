@@ -1,17 +1,18 @@
 # BoomerSubscreen
-Wanna try older sound voltex games with a touch screen monitor that has no subscreen support?
+## Wanna try older sound voltex games with a touch screen monitor that has no subscreen support?
 
-<img width="1920" height="1080" alt="{ED54D374-21D7-4D0F-80C2-00BFA7C6DB77}" src="https://github.com/user-attachments/assets/5417599b-cbc7-453d-afc3-4885f9ba5f74" />
+<img width="1280" height="720" alt="{ED54D374-21D7-4D0F-80C2-00BFA7C6DB77}" src="https://github.com/user-attachments/assets/5417599b-cbc7-453d-afc3-4885f9ba5f74" />
 
 
-Features?
+
+## Features:
 - You can hide the system buttons which are the Test, Service, and Coin buttons.
 - Multiple Custom Backgrounds (Image and/or Video are supported)
 - Interchangeable backgrounds while the app is running
 - Running on Virtual Joypad baked into the application
 - Customizable buttons. You can also relocate them anywhere on the screen by editing the config.json
 
-Usage:
+## Usage:
 - Set your sound voltex to borderless fullscreen
 - Open and modify config.json to
     - Configure your background directory (Set by default at backgrounds)
@@ -22,12 +23,14 @@ Usage:
 - Enjoy gaem
 - Nice one
 
-Issues:
+## Issues:
 - It will not work with konasute
 - It is a requirement to play the game on borderless fullscreen
 
 
 
+
+##
 Made with ChatGPT and Google Gemini
 
-Button Graphics were made from scratch
+Button graphics were made from scratch
