@@ -3,8 +3,6 @@
 
 <img width="1280" height="720" alt="{ED54D374-21D7-4D0F-80C2-00BFA7C6DB77}" src="https://github.com/user-attachments/assets/5417599b-cbc7-453d-afc3-4885f9ba5f74" />
 
-
-
 ## Features:
 - You can hide the system buttons which are the Test, Service, and Coin buttons.
 - Multiple Custom Backgrounds (Image and/or Video are supported)
@@ -25,12 +23,13 @@
 
 ## Issues:
 - It will not work with konasute
-- It is a requirement to play the game on borderless fullscreen
+- It is a requirement to play the game on borderless fullscreen because it's a separate application, not a plugin
 
 
+## DIY Build
+```pip install -r requirements.txt```<br>
+```pyinstaller --noconsole --onefile --name "BoommerSubscreen" --icon="icon.ico" --collect-all vgamepad BoomerSubscreen.py```
 
 
 ##
-Made with ChatGPT and Google Gemini
-
-Button graphics were made from scratch
+###### - Made with ChatGPT and Google Gemini </br> - Button graphics were made from scratch
