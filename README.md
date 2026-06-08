@@ -35,3 +35,5 @@ pyinstaller --noconsole --onefile --name "OjiisanSubscreen" --icon="icon.ico" --
 
 ##
 ###### - Made with ChatGPT and Google Gemini </br> - Button graphics were made from scratch
+
+#### Uhe~
