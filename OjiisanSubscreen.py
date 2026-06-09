@@ -1,9 +1,9 @@
 import sys, json
 import cv2
 from pathlib import Path
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, QEvent, QPropertyAnimation, QParallelAnimationGroup
 from PySide6.QtGui import QPixmap, QColor, QPainter, QImage
-from PySide6.QtWidgets import QApplication, QWidget, QLabel, QComboBox
+from PySide6.QtWidgets import QApplication, QWidget, QLabel, QComboBox, QGraphicsOpacityEffect
 
 try:
     import vgamepad as vg
@@ -31,14 +31,13 @@ if GAMEPAD:
     }
 
 class Btn(QLabel):
-    def __init__(self, parent, cfg, sx, sy, overlay_img_name="pressed.png", asset_dir="buttons"):
-        super().__init__(parent)
-        self.p = parent
+    def __init__(self, main_win, parent_widget, cfg, sx, sy, overlay_img_name="pressed.png", asset_dir="ui"):
+        super().__init__(parent_widget)
+        self.main_win = main_win
         self.cfg = cfg
         self.overlay = False
         self.overlay_pixmap = None
         
-        # Load main button image
         img = Path(asset_dir) / cfg["image"]
         if img.exists():
             pm = QPixmap(str(img))
@@ -52,7 +51,6 @@ class Btn(QLabel):
             
         self.move(int(cfg["x"] * sx), int(cfg["y"] * sy))
 
-        # Pre-load the pressed overlay image if it exists
         overlay_path = Path(asset_dir) / overlay_img_name
         if overlay_path.exists():
             self.overlay_pixmap = QPixmap(str(overlay_path)).scaled(
@@ -63,7 +61,7 @@ class Btn(QLabel):
         self.overlay = True
         self.update()
         if "controller_button" in self.cfg:
-            self.p.press_btn(self.cfg["controller_button"])
+            self.main_win.press_btn(self.cfg["controller_button"])
         QTimer.singleShot(100, self.release_vis)
 
     def release_vis(self):
@@ -75,10 +73,8 @@ class Btn(QLabel):
         if self.overlay:
             qp = QPainter(self)
             if self.overlay_pixmap:
-                # Draw the custom image overlay
                 qp.drawPixmap(0, 0, self.overlay_pixmap)
             else:
-                # Fallback to red semi-transparent rectangle if missing
                 qp.fillRect(self.rect(), QColor(255, 0, 0, 76))
 
 class Win(QWidget):
@@ -97,9 +93,52 @@ class Win(QWidget):
         self.setGeometry(geo)
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
 
-        # Main background label
+        # 1. Main background label
         self.bg = QLabel(self)
         self.bg.setGeometry(self.rect())
+
+        # 2. Dim Overlay for Concentration Mode
+        self.dim_overlay = QWidget(self)
+        self.dim_overlay.setGeometry(self.rect())
+        self.dim_overlay.setStyleSheet("background-color: black;")
+        self.dim_overlay.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.dim_opacity_effect = QGraphicsOpacityEffect()
+        self.dim_opacity_effect.setOpacity(0.0)
+        self.dim_overlay.setGraphicsEffect(self.dim_opacity_effect)
+
+        # 3. Concentration Icon
+        self.conc_icon = QLabel(self)
+        conc_cfg = self.config.get("concentration_mode", {})
+        rw = self.config.get("reference_width", 1920)
+        rh = self.config.get("reference_height", 1080)
+        sx = self.width() / rw
+        sy = self.height() / rh
+
+        img_path = Path("ui") / conc_cfg.get("image", "concentration.png")
+        if img_path.exists():
+            pm = QPixmap(str(img_path))
+            self.conc_icon.setPixmap(pm)
+            self.conc_icon.setScaledContents(True)
+            self.conc_icon.resize(int(pm.width() * sx), int(pm.height() * sy))
+        else:
+            self.conc_icon.setText("CONCENTRATION MODE")
+            self.conc_icon.setStyleSheet("color:white; font-size:32px;")
+            self.conc_icon.adjustSize()
+            
+        cx = int(conc_cfg.get("x", 800) * sx)
+        cy = int(conc_cfg.get("y", 400) * sy)
+        self.conc_icon.move(cx, cy)
+        self.conc_icon.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.conc_icon_opacity = QGraphicsOpacityEffect()
+        self.conc_icon_opacity.setOpacity(0.0)
+        self.conc_icon.setGraphicsEffect(self.conc_icon_opacity)
+
+        # 4. UI Container (Holds all buttons and dropdowns so they can fade out together)
+        self.ui_container = QWidget(self)
+        self.ui_container.setGeometry(self.rect())
+        self.ui_opacity_effect = QGraphicsOpacityEffect()
+        self.ui_opacity_effect.setOpacity(1.0)
+        self.ui_container.setGraphicsEffect(self.ui_opacity_effect)
 
         # OpenCV Video setup
         self.video_cap = None
@@ -121,10 +160,12 @@ class Win(QWidget):
         self.bg_index = 0
         self.load_background()
 
-        self.bg_dropdown = QComboBox(self)
+        # Dropdown UI
+        self.bg_dropdown = QComboBox(self.ui_container)
         self.bg_dropdown.addItems(self.background_names)
         self.bg_dropdown.move(20, 20)
         self.bg_dropdown.resize(500, 80)
+        self.bg_dropdown.view().setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.bg_dropdown.setStyleSheet("""
         QComboBox {
             background-color: rgba(0,0,0,220);
@@ -134,7 +175,33 @@ class Win(QWidget):
             padding-left: 15px;
             font-size: 28px;
             font-weight: bold;
-        }""")
+        }
+        QComboBox QAbstractItemView {
+            background-color: rgba(15, 15, 15, 240);
+            color: white;
+            border: 2px solid white;
+            selection-background-color: rgba(255, 0, 0, 150);
+            font-size: 24px;
+        }
+        QScrollBar:vertical {
+            background-color: rgba(30, 30, 30, 200);
+            width: 30px;
+            margin: 0px;
+        }
+        QScrollBar::handle:vertical {
+            background-color: rgba(120, 120, 120, 255);
+            min-height: 40px;
+            border-radius: 6px;
+            margin: 4px;
+        }
+        QScrollBar::handle:vertical:hover {
+            background-color: rgba(180, 180, 180, 255);
+        }
+        QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+            background: none;
+            height: 0px;
+        }
+        """)
         self.bg_dropdown.currentIndexChanged.connect(self.change_background)
 
         self.gamepad = None
@@ -144,34 +211,94 @@ class Win(QWidget):
             except Exception:
                 pass
 
-        rw = self.config.get("reference_width", 1920)
-        rh = self.config.get("reference_height", 1080)
-        sx = self.width() / rw
-        sy = self.height() / rh
-
         overlay_img = self.config.get("pressed_overlay_image", "pressed.png")
 
-        # Load dynamic UI from config
+        # Load buttons into the ui_container
         for b in self.config.get("main_buttons", []):
-            Btn(self, b, sx, sy, overlay_img).show()
+            Btn(self, self.ui_container, b, sx, sy, overlay_img).show()
 
         self.extra_buttons = []
         for b in self.config.get("extra_buttons", []):
-            btn = Btn(self, b, sx, sy, overlay_img)
+            btn = Btn(self, self.ui_container, b, sx, sy, overlay_img)
             btn.show()
             self.extra_buttons.append(btn)
 
         self.extras_visible = not self.config.get("extras_hidden_on_startup", True)
         self.update_extras()
 
-        # Load toggle button from config, fallback to default if missing
         default_toggle = {"image": "system_toggle.png", "x": 1650, "y": 100, "controller_button": "UP"}
         toggle_cfg = self.config.get("toggle_button", default_toggle)
-        self.toggle_btn = Btn(self, toggle_cfg, sx, sy, overlay_img)
+        self.toggle_btn = Btn(self, self.ui_container, toggle_cfg, sx, sy, overlay_img)
         self.toggle_btn.mousePressEvent = lambda e: self.toggle_extras()
         self.toggle_btn.show()
 
+        # Concentration Mode Animation Setup
+        self.in_concentration_mode = False
+        self.anim_group = QParallelAnimationGroup()
+        
+        self.anim_ui = QPropertyAnimation(self.ui_opacity_effect, b"opacity")
+        self.anim_dim = QPropertyAnimation(self.dim_opacity_effect, b"opacity")
+        self.anim_icon = QPropertyAnimation(self.conc_icon_opacity, b"opacity")
+        
+        self.anim_ui.setDuration(1000)
+        self.anim_dim.setDuration(1000)
+        self.anim_icon.setDuration(1000)
+        
+        self.anim_group.addAnimation(self.anim_ui)
+        self.anim_group.addAnimation(self.anim_dim)
+        self.anim_group.addAnimation(self.anim_icon)
+
+        self.idle_timer = QTimer(self)
+        self.idle_timer.timeout.connect(self.enter_concentration_mode)
+        
+        # Install global event filter to catch all touches
+        QApplication.instance().installEventFilter(self)
+
         self.showFullScreen()
+        self.reset_idle_timer()
+
+    def eventFilter(self, watched, event):
+        t = event.type()
+        # Reset timer on any mouse move, click, or touch
+        if t in (QEvent.MouseMove, QEvent.MouseButtonPress, QEvent.TouchBegin, QEvent.TouchUpdate):
+            self.reset_idle_timer()
+            
+            # Wake up if asleep
+            if self.in_concentration_mode:
+                self.exit_concentration_mode()
+                # Consume the initial click so it doesn't accidentally trigger a button underneath
+                if t in (QEvent.MouseButtonPress, QEvent.TouchBegin):
+                    return True
+                    
+        return super().eventFilter(watched, event)
+
+    def reset_idle_timer(self):
+        conc_cfg = self.config.get("concentration_mode", {})
+        if not conc_cfg.get("enabled", True):
+            return
+            
+        timeout_ms = int(conc_cfg.get("timeout_seconds", 60) * 1000)
+        self.idle_timer.start(timeout_ms)
+
+    def enter_concentration_mode(self):
+        if self.in_concentration_mode: return
+        self.in_concentration_mode = True
+        
+        self.anim_group.stop()
+        self.anim_ui.setEndValue(0.0)
+        self.anim_dim.setEndValue(self.config.get("concentration_mode", {}).get("dim_opacity", 0.5))
+        self.anim_icon.setEndValue(1.0)
+        self.anim_group.start()
+
+    def exit_concentration_mode(self):
+        if not self.in_concentration_mode: return
+        self.in_concentration_mode = False
+        
+        self.anim_group.stop()
+        self.anim_ui.setEndValue(1.0)
+        self.anim_dim.setEndValue(0.0)
+        self.anim_icon.setEndValue(0.0)
+        self.anim_group.start()
 
     def update_extras(self):
         for b in self.extra_buttons:

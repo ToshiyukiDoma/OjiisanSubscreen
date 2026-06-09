@@ -3,8 +3,16 @@
   "reference_width": 1920,
   "reference_height": 1080,
   "extras_hidden_on_startup": true,
-  "background_directory": "backgrounds",
+  "background_directory": "C:/Users/MXGG/Documents/touchscreen something/v.3.3/backgrounds",
   "pressed_overlay_image": "pressed.png",
+  "concentration_mode": {
+    "enabled": true,
+    "timeout_seconds": 15,
+    "dim_opacity": 0.75,
+    "image": "concentration.png",
+    "x": 800,
+    "y": 850
+  },
   "main_buttons": [
     {"image": "7.png", "x": 100, "y": 325, "controller_button": "A"},
     {"image": "8.png", "x": 275, "y": 325, "controller_button": "B"},
