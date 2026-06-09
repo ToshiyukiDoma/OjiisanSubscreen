@@ -9,6 +9,7 @@
 - Interchangeable backgrounds while the app is running
 - Running on Virtual Joypad baked into the application
 - Customizable buttons. You can also relocate them anywhere on the screen by editing the config.json
+- Concentration Mode: The UI elements will disappear except for the background and will dim depending on your timeout and dim preference.
 
 ## Usage:
 - Set your sound voltex to borderless fullscreen
