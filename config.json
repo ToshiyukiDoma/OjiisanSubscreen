@@ -3,7 +3,7 @@
   "reference_width": 1920,
   "reference_height": 1080,
   "extras_hidden_on_startup": true,
-  "background_directory": "C:/Users/MXGG/Documents/touchscreen something/v.3.3/backgrounds",
+  "background_directory": "backgrounds",
   "pressed_overlay_image": "pressed.png",
   "concentration_mode": {
     "enabled": true,
